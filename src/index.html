@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!--meta data-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!--title-->
+    <title>KYC Demo</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top" class="index">
+
+    <!-- JS source files -->
+    <script type="text/javascript" src="./dist/web3.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.web3 !== "undefined" && typeof window.web3.currentProvider !== "undefined") {
+            var web3 = new Web3(window.web3.currentProvider);
+        } else {
+            var web3 = new Web3();
+        }
+    </script>
+    <script language="JavaScript" type="text/javascript" src="./js/contractDetails.js"></script>
+    <script language="JavaScript" type="text/javascript" src="./index.js"></script>
+    <center>
+    <!-- Navigation bar-->
+    <nav id="mainNav" class="navbar navbar-default navbar-custom navbar-fixed-top">
+        <div class="container" align="center">
+            <!-- For better display in small screen sizes -->
+            <div class="navbar-header page-scroll" >
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+                    </button>
+                <a class="navbar-brand page-scroll" href="#page-top" style="color:black;font-size:40px">KYC (Know Your Customer) - Blockchain DAPP</a>
+            </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+                <a data-toggle="modal" data-target="#signUp" id="sign_up" style="color:black;font-size:30px"><span class="glyphicon glyphicon-user"></span> Sign Up</a>
+                <a data-toggle="modal" data-target="#logIn" id="log_in" style="color:black;font-size:30px"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+            
+        </div>
+    </nav>
+    </center>
+
+    <!-- Each feature described in detail -->
+
+    <!--Modal for signUp-->
+    <div id="signUp" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!--Modal Content-->
+            <div class="modal-content">
+
+                <!--Modal Header-->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">X</button>
+                    <h3 align="center"> Register your Bank</h3>
+                </div>
+
+                <!--Modal Body-->
+                <div class="container">
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <fieldset>
+                                <div class="control-group">
+                                    <!-- Name of Bank -->
+                                    <label class="control-label" for="username">Name of Bank</label>
+                                    <div class="controls">
+                                        <!--Take info from here and store it in the block-chain-->
+                                        <input type="text" id="username" name="username_1" placeholder="" class="input-xlarge">
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+
+
+                <div class="container">
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <fieldset>
+                                <div class="control-group">
+                                    <!-- Name of Bank -->
+                                    <label class="control-label" for="username">Password</label>
+                                    <div class="controls">
+                                        <!--Take info from here and store it in the block-chain-->
+                                        <input type="text" id="password" name="password_s" placeholder="" class="input-xlarge">
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <fieldset>
+                                <div class="control-group">
+                                    <!-- Name of Bank -->
+                                    <label class="control-label" for="username">Registration No</label>
+                                    <div class="controls">
+                                        <!--Take info from here and store it in the block-chain-->
+                                        <input type="text" id="reg_no" name="reg_no" placeholder="" class="input-xlarge">
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+
+                <!--Modal Footer-->
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" data-dismiss="modal" id="sign_up" onclick="onSignUp()" style="color:black">Sign up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Modal for logIn-->
+    <div id="logIn" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!--Modal Content-->
+            <div class="modal-content">
+
+                <!--Modal Header-->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">X</button>
+                    <h3 align="center"> Log In </h3>
+                </div>
+
+                <!--Modal Body-->
+                <div class="container">
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <fieldset>
+                                <div class="control-group">
+                                    <!-- Name of Bank -->
+                                    <label class="control-label" for="username">Name of Bank</label>
+                                    <div class="controls">
+                                        <!--Take info from here and store it in the block-chain-->
+                                        <input type="text" id="username_l" name="username_2" placeholder="" class="input-xlarge">
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+
+
+                <div class="container">
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <fieldset>
+                                <div class="control-group">
+                                    <!-- Name of Bank -->
+                                    <label class="control-label" for="username">Password</label>
+                                    <div class="controls">
+                                        <!--Take info from here and store it in the block-chain-->
+                                        <input type="text" id="password_l" name="password_l" placeholder="" class="input-xlarge">
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+
+                <!--Modal Footer-->
+                <div class="modal-footer">
+                    <!--change the onclick so that it verifies account no from the blockchain-->
+                    <button type="submit" class="btn btn-primary" data-dismiss="modal" id="log_in" onclick="onLogin()" style="color:black">Log In</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js" integrity="sha384-mE6eXfrb8jxl0rzJDBRanYqgBxtJ6Unn4/1F7q4xRRyIw7Vdg9jP4ycT7x1iVsgb" crossorigin="anonymous"></script>
+
+
+    <!-- Theme JavaScript -->
+    <script src="js/agency.js"></script>
+
+</body>
+
+</html>
