@@ -1,0 +1,43 @@
+{
+  "name": "decentralized-kyc-dapp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A decentralised Know Your Customer platform on Ethereum: banks register on-chain, create and update customer KYC records, and customers grant or revoke each bank's access to their file.",
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "solidity",
+    "smart-contracts",
+    "kyc",
+    "dapp",
+    "web3",
+    "truffle",
+    "ganache"
+  ],
+  "author": "Vivek Reddy (https://github.com/VivekReddy2001)",
+  "license": "MIT",
+  "homepage": "https://github.com/VivekReddy2001/Dapp-for-decentralized-KYC-verification#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VivekReddy2001/Dapp-for-decentralized-KYC-verification.git"
+  },
+  "bugs": {
+    "url": "https://github.com/VivekReddy2001/Dapp-for-decentralized-KYC-verification/issues"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "scripts": {
+    "chain": "ganache --wallet.deterministic --wallet.totalAccounts 10 --chain.networkId 5777 --chain.chainId 1337 --server.host 127.0.0.1 --server.port 8545",
+    "compile": "truffle compile",
+    "migrate": "truffle migrate --reset --network development",
+    "sync": "node scripts/sync-contract.js",
+    "deploy": "npm run migrate && npm run sync",
+    "serve": "node scripts/serve.js",
+    "start": "node scripts/serve.js"
+  },
+  "devDependencies": {
+    "ganache": "^7.9.2",
+    "truffle": "^5.11.5"
+  }
+}

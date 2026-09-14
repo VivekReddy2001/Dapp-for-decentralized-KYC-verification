@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/VivekReddy2001/Dapp-for-decentralized-KYC-verification/security/advisories/new
+    about: Report privately through a GitHub security advisory rather than a public issue.
+  - name: Known security findings
+    url: https://github.com/VivekReddy2001/Dapp-for-decentralized-KYC-verification/blob/main/SECURITY.md
+    about: Fourteen documented issues, each with the fix it needs — please check before reporting.
+  - name: Architecture and design
+    url: https://github.com/VivekReddy2001/Dapp-for-decentralized-KYC-verification/blob/main/docs/ARCHITECTURE.md
+    about: HLD and LLD with twelve diagrams.

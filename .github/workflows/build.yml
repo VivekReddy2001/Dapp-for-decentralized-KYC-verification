@@ -1,0 +1,50 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  compile-and-deploy:
+    name: Compile and deploy to a local chain
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18 # Truffle 5 is happiest on the 16/18 line
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Compile the contract
+        # The compiler version is pinned in truffle-config.js: this contract
+        # grows storage arrays with array.length++, removed in Solidity 0.6.
+        run: npx truffle compile
+
+      - name: Start a local chain
+        run: |
+          npx ganache --wallet.deterministic --chain.networkId 5777 \
+            --server.host 127.0.0.1 --server.port 8545 --detach
+          for i in $(seq 1 30); do
+            if curl -s -X POST -H 'Content-Type: application/json' \
+              --data '{"jsonrpc":"2.0","method":"net_version","params":[],"id":1}' \
+              http://127.0.0.1:8545 > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          echo "Ganache did not start in time" && exit 1
+
+      - name: Deploy
+        run: npx truffle migrate --reset --network development
+
+      - name: Sync the address into the front end
+        run: npm run sync
+
+      - name: Check the front end points at a deployed contract
+        run: |
+          grep -qE 'var contractAddress = "0x[0-9a-fA-F]{40}"' src/js/contractDetails.js
+          echo "contractDetails.js carries a deployed address"
