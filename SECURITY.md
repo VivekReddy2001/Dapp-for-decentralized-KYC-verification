@@ -7,7 +7,8 @@ be read. It is not production software and must not be deployed to a public netw
 anyone's real identity documents. It runs against a local Ganache chain on purpose.
 
 Everything below was found by reading the contract and the client carefully and by running the whole
-flow end to end. Rather than quietly patching the interesting parts away, the findings are written up
+flow end to end. Every contract-level finding (#1–#9, #11, #13) is reproduced by an automated test in
+[`test/kyc.test.js`](test/kyc.test.js), which CI runs on every push. Rather than quietly patching the interesting parts away, the findings are written up
 here with the fix each one needs — the analysis is the most useful thing in the repository.
 
 ## Reporting
@@ -143,6 +144,14 @@ for (uint j = i + 1; j < allOrgs.length; ++j) { allOrgs[i-1] = allOrgs[i]; }
 for (uint j = i; j < allRequests.length - 2; ++j) { allRequests[i] = allRequests[i+1]; }
 ```
 
+What this does in practice (each case is a test in `test/kyc.test.js`):
+
+- removing the **first** of several banks or customers underflows `i - 1` and reverts;
+- removing a **middle** entry copies it over the first one and then pops the last, so with
+  `alice, bob, carol` a call to remove `bob` reports success and leaves only `bob`;
+- refusing a request when fewer than two exist computes `length - 2`, which wraps, and the loop
+  runs until the transaction is out of gas.
+
 **Fix.** The idiomatic swap-and-pop:
 
 ```solidity
@@ -153,9 +162,13 @@ allCustomers.pop();
 ## 9. Arithmetic wraps instead of reverting — Medium
 
 Compiled with solc 0.5, where unsigned subtraction below zero wraps to `2²⁵⁶ − 1` rather than
-reverting. `updateRatingCustomer(uname, false)` decrements `upvotes` before using it, so a downvote
-at zero upvotes wraps both the counter and the rating. The `if (rating < 0)` guards can never fire,
-because `rating` is a `uint`.
+reverting, and the `if (rating < 0)` guards can never fire, because `rating` is a `uint`:
+
+- `updateRating(bank, false)` subtracts `100 / (KYC_count + 1)`. A bank with no verified customers
+  goes 200 → 100 → 0 → **2²⁵⁶ − 100** after three downvotes, the highest rating on the network.
+- `updateRatingCustomer(uname, false)` decrements `upvotes` before dividing by `upvotes + 1`. At zero
+  upvotes the counter wraps to 2²⁵⁶ − 1, the divisor wraps to 0, and the call reverts with a
+  division by zero.
 
 **Fix.** Compile with 0.8.x, where overflow reverts by default — or use SafeMath while staying on
 0.5.x.

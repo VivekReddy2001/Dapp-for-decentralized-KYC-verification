@@ -13,6 +13,7 @@ promise in a privacy policy.
 [![Ganache](https://img.shields.io/badge/Ganache-7-e4a663?logo=ganache&logoColor=white)](https://archive.trufflesuite.com/ganache/)
 [![web3.js](https://img.shields.io/badge/web3.js-0.20-f16822?logo=web3dotjs&logoColor=white)](https://web3js.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-6D28D9.svg)](LICENSE)
+[![Build](https://github.com/VivekReddy2001/Dapp-for-decentralized-KYC-verification/actions/workflows/build.yml/badge.svg)](https://github.com/VivekReddy2001/Dapp-for-decentralized-KYC-verification/actions/workflows/build.yml)
 
 [How it works](#how-it-works) · [Walkthrough](#walkthrough) · [Architecture](docs/ARCHITECTURE.md) · [Contract reference](docs/CONTRACT.md) · [Security](SECURITY.md)
 
@@ -32,6 +33,7 @@ promise in a privacy policy.
 - [Getting started](#getting-started)
 - [Walkthrough](#walkthrough)
 - [The smart contract](#the-smart-contract)
+- [Tests](#tests)
 - [Security — read this one](#security--read-this-one)
 - [What changed when this was published](#what-changed-when-this-was-published)
 - [Roadmap](#roadmap)
@@ -247,7 +249,7 @@ Dapp-for-decentralized-KYC-verification/
 
 ## Getting started
 
-**You need** Node.js 16 or newer, and nothing else — Ganache and Truffle install with the project.
+**You need** Node.js 20 or newer, and nothing else — Ganache and Truffle install with the project.
 
 ```bash
 git clone https://github.com/VivekReddy2001/Dapp-for-decentralized-KYC-verification.git
@@ -283,6 +285,7 @@ Open **<http://localhost:8080/index.html>** for the bank portal and
 | `npm run sync` | Copies the deployed address and ABI into `src/js/contractDetails.js` |
 | `npm run deploy` | `migrate` then `sync` — the one you normally want |
 | `npm run serve` | Static server for `src/` on port 8080 |
+| `npm test` | Contract test suite against the running chain (see below) |
 
 > **If every page loads but all the data is blank**, the front end is pointing at an old contract
 > address — restart Ganache, then run `npm run deploy` again. Each `truffle migrate` deploys a fresh
@@ -352,13 +355,34 @@ characteristics and the specific gotcha where there is one.
 
 ---
 
+## Tests
+
+```bash
+npm run chain   # terminal 1
+npm test        # terminal 2
+```
+
+`test/kyc.test.js` deploys a fresh contract for every test and runs 19 checks against the chain:
+
+| Group | What it checks |
+| --- | --- |
+| Intended behaviour (5) | Network bootstrap and bank membership, customer add / view / update and refusal for outsiders, bank rating rewards, access requests and grants, bank and customer sign-in |
+| `SECURITY.md` findings, reproduced (14) | #1 and #2 read KYC data and a password **straight out of contract storage** with `eth_getStorageAt`, bypassing `"Access denied!"`; #3 an ungranted bank reads a record; #4 a stranger grants access; #5 one bank overwrites another's customer; #6 anyone moves a rating; #7 the bank "password" is its public address; #8 the three broken removal loops (a revert, a removal that deletes the *wrong* customers, an out-of-gas refusal); #9 a bank rating that wraps to 2²⁵⁶ − 100 and a customer downvote that divides by zero; #11 consent cannot be withdrawn; #13 no events are emitted |
+
+The second group asserts the current, flawed behaviour on purpose. Fixing a finding makes its test
+fail, which is the signal to rewrite that test to assert the fix.
+
+---
+
 ## Security — read this one
 
 This is a **student project**, published so the design and its flaws can be read. It runs against a
 local chain on purpose and must not be used with anyone's real identity documents.
 
 [`SECURITY.md`](SECURITY.md) is a findings report: fourteen issues, each with its severity, why it
-matters and the fix it needs. The three that matter most:
+matters and the fix it needs. Every contract-level finding is also **reproduced by a test** in
+[`test/kyc.test.js`](test/kyc.test.js), run in CI on every push, so each claim in the report can be
+checked rather than taken on trust. The three that matter most:
 
 | # | Finding | Severity |
 | --- | --- | --- |
@@ -405,8 +429,9 @@ rather than patched, so what is published is the project as it was built, with a
 4. **Add `revokeBank`** — consent that cannot be withdrawn is not really consent.
 5. **Emit events** for registration, record changes and consent, so there is an auditable history
    rather than only current state.
-6. **Modernise the toolchain** — Hardhat, ethers v6, Solidity 0.8 with checked arithmetic, and a test
-   suite around the consent and rating rules.
+6. **Modernise the toolchain** — Hardhat, ethers v6, Solidity 0.8 with checked arithmetic. The test
+   suite already pins down the current behaviour, so the port can be checked finding by finding:
+   each "reproduced" test should start failing as its finding is fixed.
 7. **Then the lending platform this was built for:** a borrower pool carrying amount, interest and
    supporting documents, lenders making offers, agreements recorded on chain, and a credit score built
    from repayment history — with this KYC layer keeping one person to one identity.

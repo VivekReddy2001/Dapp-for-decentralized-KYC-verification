@@ -25,7 +25,7 @@
     "url": "https://github.com/VivekReddy2001/Dapp-for-decentralized-KYC-verification/issues"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=20"
   },
   "scripts": {
     "chain": "ganache --wallet.deterministic --wallet.totalAccounts 10 --chain.networkId 5777 --chain.chainId 1337 --server.host 127.0.0.1 --server.port 8545",
@@ -34,7 +34,8 @@
     "sync": "node scripts/sync-contract.js",
     "deploy": "npm run migrate && npm run sync",
     "serve": "node scripts/serve.js",
-    "start": "node scripts/serve.js"
+    "start": "node scripts/serve.js",
+    "test": "truffle test"
   },
   "devDependencies": {
     "ganache": "^7.9.2",

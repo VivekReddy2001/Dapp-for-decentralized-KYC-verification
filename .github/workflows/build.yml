@@ -12,11 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: 18 # Truffle 5 is happiest on the 16/18 line
+          node-version: 22
 
       - name: Install dependencies
         run: npm install --no-audit --no-fund
@@ -37,6 +37,9 @@ jobs:
             sleep 1
           done
           echo "Ganache did not start in time" && exit 1
+
+      - name: Contract tests (intended behaviour + every SECURITY.md finding)
+        run: npx truffle test --network development
 
       - name: Deploy
         run: npx truffle migrate --reset --network development
